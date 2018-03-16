@@ -15,34 +15,29 @@ public class ISINList {
     public ISINList(EsmaProperties properties){
         esmaProperties = properties;
     }
-    public void loadIsinList (){
+    public void loadIsinList () throws IOException {
         logger.info("Loading "+esmaProperties.getSmFilePath());
-        try {
-            BufferedReader reader = new BufferedReader(new FileReader(esmaProperties.getSmFilePath()));
-            String fline;
-            while ((fline = reader.readLine()) != null) {
-                String[] value = fline.split(inMsgDelim);
-                RecordISIN sm = new RecordISIN();
-                if (isinListMap.containsKey(value[1])) {
-                    logger.debug("Duplicate ISIN record found:  " + value[0] + " " + value[1]);
-                    sm = isinListMap.get(value[1]);
-                    sm.addSmId(value[0]);
+        BufferedReader reader = new BufferedReader(new FileReader(esmaProperties.getSmFilePath()));
+        String fline;
+        while ((fline = reader.readLine()) != null) {
+            String[] value = fline.split(inMsgDelim);
+            RecordISIN sm = new RecordISIN();
+            if (isinListMap.containsKey(value[1])) {
+                logger.debug("Duplicate ISIN record found:  " + value[0] + " " + value[1]);
+                sm = isinListMap.get(value[1]);
+                sm.addSmId(value[0]);
+            } else {
+                sm.addSmId(value[0]);
+                sm.setSmTicker(value[1]);
+                if (value[3].equalsIgnoreCase("yes")) {
+                    sm.setSmStatus(true);
                 } else {
-                    sm.addSmId(value[0]);
-                    sm.setSmTicker(value[1]);
-                    if (value[3].equalsIgnoreCase("yes")) {
-                        sm.setSmStatus(true);
-                    } else {
-                        sm.setSmStatus(false);
-                    }
-                    isinListMap.put(value[1],sm);
+                    sm.setSmStatus(false);
                 }
+                isinListMap.put(value[1],sm);
             }
-            logger.info("ISIN List loaded: "+isinListMap.size());
-        } catch (IOException e) {
-            logger.error("Unable to read from: "+esmaProperties.getSmFilePath());
         }
-
+        logger.info("ISIN List loaded: "+isinListMap.size());
     }
 
     public void addIsin(String value) {

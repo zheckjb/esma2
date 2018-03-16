@@ -47,14 +47,21 @@ public class Esma {
             String listOfFiles = getListOfFiles(requestUrl);
             logger.debug(listOfFiles);
             getLinksbyJson(listOfFiles, esmaProperties.getDefFileType());
+            logger.debug("Number of links to process: "+linksArray.size());
             if (linksArray.size() > 0 ) {
                 ISINList isinList = new ISINList(esmaProperties);
                 isinList.loadIsinList();
-                DownloadEsmaFile downloadEsmaFile = new DownloadEsmaFile(esmaProperties);
+                GetEsmaFiles getEsmaFiles = new GetEsmaFiles(esmaProperties);
                 for (UrlList urlList : linksArray) {
-                            downloadEsmaFile.downloadFile(urlList);
+                    getEsmaFiles.downloadFile(urlList);
+                    getEsmaFiles.unZipIt(urlList);
                 }
-
+                SearchISIN searchISIN = new SearchISIN(esmaProperties);
+                for (UrlList urlList : linksArray){
+                    logger.debug("XML file: "+urlList.getFileXml());
+                    searchISIN.parseXml(urlList,isinList);
+                }
+                isinList.saveIsinList();
             } else {
                 logger.info(String.format("Links with type %s are not found",esmaProperties.getDefFileType()));
             }
