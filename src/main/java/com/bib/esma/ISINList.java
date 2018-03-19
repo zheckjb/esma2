@@ -20,12 +20,14 @@ public class ISINList {
         BufferedReader reader = new BufferedReader(new FileReader(esmaProperties.getSmFilePath()));
         String fline;
         while ((fline = reader.readLine()) != null) {
+            logger.debug("Record read: "+fline);
             String[] value = fline.split(inMsgDelim);
             RecordISIN sm = new RecordISIN();
             if (isinListMap.containsKey(value[1])) {
-                logger.debug("Duplicate ISIN record found:  " + value[0] + " " + value[1]);
+                logger.warn("Duplicate ISIN record found:  " + value[0] + " " + value[1]);
                 sm = isinListMap.get(value[1]);
                 sm.addSmId(value[0]);
+                logger.debug("SM count "+sm.smIdLen());
             } else {
                 sm.addSmId(value[0]);
                 sm.setSmTicker(value[1]);
@@ -36,6 +38,7 @@ public class ISINList {
                 }
                 isinListMap.put(value[1],sm);
             }
+            logger.debug("Updated SM count"+isinListMap.get(value[1]).smIdLen());
         }
         logger.info("ISIN List loaded: "+isinListMap.size());
     }
@@ -66,13 +69,16 @@ public class ISINList {
         try {
             File file = new File(esmaProperties.getIsinFilePath());
             FileWriter fileHandle = new FileWriter(file);
+            logger.debug("Hasmapsize "+isinListMap.size());
             for (Map.Entry<String, RecordISIN> value : isinListMap.entrySet()) {
+                logger.debug("Processing "+value.getKey());
+                logger.debug(" SM count"+value.getValue().smIdLen());
                 if (value.getValue().smIdLen() > 1) {
                     for (int i = 0; i < value.getValue().smIdLen(); i ++) {
-                        fileHandle.append(String.format("%s#%s#%s \r\n", value.getValue().getSmId(i), value.getKey(), value.getValue().getSmStatus()));
+                        fileHandle.append(String.format("%s#%s#%s \n", value.getValue().getSmId(i), value.getKey(), value.getValue().getSmStatus()));
                     }
                 } else {
-                    fileHandle.append(String.format("%s#%s#%s \r\n", value.getValue().getSmId(0), value.getKey(), value.getValue().getSmStatus()));
+                    fileHandle.append(String.format("%s#%s#%s \n", value.getValue().getSmId(0), value.getKey(), value.getValue().getSmStatus()));
                 }
             }
             fileHandle.flush();
