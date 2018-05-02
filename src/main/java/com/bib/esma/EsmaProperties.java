@@ -22,25 +22,23 @@ public class EsmaProperties {
 
 
     public void initLogger(String propFileName) throws IOException {
-        String propFileNamePath = "res/"+propFileName;
         Properties properties = new Properties();
-        URL url = ClassLoader.getSystemResource(propFileNamePath);
+        URL url = ClassLoader.getSystemResource(propFileName);
         try (InputStream in = url.openStream()) {
             properties.load(in);
             PropertyConfigurator.configure(properties);
             logger = Logger.getLogger(EsmaProperties.class);
             logger.debug("Logger properties loaded "+url.toString());
         } catch (IOException e) {
-            System.out.println("Unable to load "+propFileNamePath);
+            System.out.println("Unable to load "+ propFileName);
 //        } catch (NullPointerException e) {
 //            System.out.println("Unable to load "+propFileNamePath);
         }
     }
 
     public void loadProperties(String propFileName) throws Exception,RuntimeException,IOException,NullPointerException{
-        String propFileNamePath = "res/"+propFileName;
         Properties properties = new Properties();
-        URL url = ClassLoader.getSystemResource(propFileNamePath);
+        URL url = ClassLoader.getSystemResource(propFileName);
         logger.debug("Properties file: "+url.toString());
         try (InputStream in = url.openStream()){
             properties.load(in);
@@ -52,17 +50,17 @@ public class EsmaProperties {
             setxmlDLTPathTerm(properties.getProperty("search.DLTINS.end").trim());
             setXmlFULPath(properties.getProperty("search.FULINS").trim());
         } catch (IOException e) {
-            System.out.println("Unable to load "+propFileNamePath);
-            logger.error("1");
-            throw new RuntimeException("asasas");
+//            System.out.println("Unable to load "+propFileNamePath);
+            logger.error("1. Unable to load "+ propFileName);
+            throw new RuntimeException("1. Unable to load "+ propFileName);
         } catch (NullPointerException e) {
-            System.out.println("Unable to load "+propFileNamePath);
-            logger.error("2");
-            throw new RuntimeException("asasdfsdsas");
+//            System.out.println("Unable to load "+propFileNamePath);
+            logger.error("2. Unable to load "+ propFileName);
+            throw new RuntimeException("2. Unable to load "+ propFileName);
         } catch (Exception e) {
-            System.out.println("Unable to load "+propFileNamePath);
-            logger.error("3");
-            throw new RuntimeException("asasdfs");
+//            System.out.println("Unable to load "+propFileNamePath);
+            logger.error("3. Unable to load "+ propFileName);
+            throw new RuntimeException("3. Unable to load "+ propFileName);
 
         }
     }

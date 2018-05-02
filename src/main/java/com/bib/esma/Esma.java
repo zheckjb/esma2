@@ -17,7 +17,7 @@ import java.util.List;
 
 public class Esma {
     private static final Logger logger = Logger.getLogger(Esma.class);
-    private static final String LOG4J_PROPS = "log4j.properties";
+    private static final String LOG4J_PROPS = "esma.log.properties";
     private static final String CONF_PROPS = "esma.properties";
     private static final String DAY_START = "T00:00:00Z";
     private static final String DAY_END = "T23:59:59Z";
